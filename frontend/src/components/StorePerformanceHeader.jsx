@@ -1,54 +1,43 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { ChevronDown } from "lucide-react";
-import axios from "axios";
 
 const StorePerformanceHeader = () => {
   const [selectedYear, setSelectedYear] = useState("2024");
   const [selectedQuarter, setSelectedQuarter] = useState("Q1");
-  const [selectedCity, setSelectedCity] = useState("All Stores");
-  const [selectedBranch, setSelectedBranch] = useState("All Branches");
+  const [selectedStore, setSelectedStore] = useState("1");
 
-  const [cities, setCities] = useState([]);
-  const [branches, setBranches] = useState([]);
-
-  const years = [ "2024", "2025"];
+  const years = ["2024"];
   const quarters = ["Q1", "Q2", "Q3", "Q4", "fullYear"];
-
-  // Fetch cities on mount
-  useEffect(() => {
-    const fetchCities = async () => {
-      try {
-        const response = await axios.get("/api/cities");
-        setCities(response.data); 
-      } catch (error) {
-        console.error("Error fetching cities:", error);
-      }
-    };
-    fetchCities();
-  }, []);
-
-  // Fetch branches when city changes
-  useEffect(() => {
-    const fetchBranches = async () => {
-      if (selectedCity === "All Stores") {
-        setBranches([]);
-        setSelectedBranch("All Branches");
-        return;
-      }
-
-      try {
-        const response = await axios.get(`/api/branches?city=${selectedCity}`);
-        setBranches(response.data); // Assumes response.data is an array of branch names
-      } catch (error) {
-        console.error("Error fetching branches:", error);
-      }
-    };
-    fetchBranches();
-  }, [selectedCity]);
+  const stores = [
+    "Pune - Koregaon Park",
+    "Pune - Shivaji Nagar",
+    "Pune - Hinjewadi",
+    "Mumbai - Bandra",
+    "Mumbai - Colaba",
+    "Mumbai - Lower Parel",
+    "Bangalore - MG Road",
+    "Bangalore - Koramangala",
+    "Bangalore - Indiranagar",
+    "Ahmedabad - Navrangpura",
+    "Ahmedabad - Satellite",
+    "Ahmedabad - SG Highway",
+    "Nagpur - Dharampeth",
+    "Nagpur - Sitabuldi",
+    "Surat - Adajan",
+    "Surat - Varachha",
+    "Mangalore - Kadri",
+    "Mangalore - Hampankatta",
+    "Mysore - Vijayanagar",
+    "Mysore - Lakshmipuram",
+    "Vadodara - Laxmi Vilas Palace",
+    "Nashik - Indiranagar",
+    "Hubli - Keshwapur",
+  ];
 
   const handleYearChange = (e) => setSelectedYear(e.target.value);
-  const handleCityChange = (e) => setSelectedCity(e.target.value);
-  const handleBranchChange = (e) => setSelectedBranch(e.target.value);
+  const handleStoreChange = (e) => {
+    setSelectedStore(parseInt(e.target.value, 10)); 
+  };
   const handleQuarterClick = (quarter) => setSelectedQuarter(quarter);
   const isSelected = (quarter) => selectedQuarter === quarter;
 
@@ -64,41 +53,21 @@ const StorePerformanceHeader = () => {
           />
         </div>
 
-        {/* City Dropdown */}
+        {/* Store Dropdown */}
         <div className="relative w-40">
           <select
-            value={selectedCity}
-            onChange={handleCityChange}
+            value={selectedStore}
+            onChange={handleStoreChange}
             className="w-full px-4 py-3 pr-10 text-center rounded-xl border border-gray-300 bg-white text-gray-700 outline-none appearance-none cursor-pointer"
           >
-            <option value="All Stores">All Stores</option>
-            {cities.map((city) => (
-              <option key={city} value={city}>
-                {city}
+            {stores.map((store, index) => (
+              <option key={index} value={index + 1}>
+                {store}
               </option>
             ))}
           </select>
           <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none" />
         </div>
-
-        {/* Branch Dropdown (Only if city is selected) */}
-        {selectedCity !== "All Stores" && (
-          <div className="relative w-40">
-            <select
-              value={selectedBranch}
-              onChange={handleBranchChange}
-              className="w-full px-4 py-3 pr-10 text-center rounded-xl border border-gray-300 bg-white text-gray-700 outline-none appearance-none cursor-pointer"
-            >
-              <option value="All Branches">All Branches</option>
-              {branches.map((branch) => (
-                <option key={branch} value={branch}>
-                  {branch}
-                </option>
-              ))}
-            </select>
-            <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none" />
-          </div>
-        )}
 
         {/* Year Dropdown */}
         <div className="relative w-40">

@@ -178,11 +178,19 @@ const storeMetricsResolvers = {
         let data;
 
         if (cachedData) {
+<<<<<<< Updated upstream
           console.log(" Returning cached COGS data from Redis.");
           data = JSON.parse(cachedData);
         } else {
           console.log(
             ` Fetching COGS per store for year ${year} from Supabase...`
+=======
+          console.log("✅ Returning cached COGS data from Redis.");
+          data = JSON.parse(cachedData);
+        } else {
+          console.log(
+            `🔄 Fetching COGS per store for year ${year} from Supabase...`
+>>>>>>> Stashed changes
           );
 
           // Fetch from Supabase
@@ -191,18 +199,30 @@ const storeMetricsResolvers = {
             { year_param: year }
           );
 
+<<<<<<< Updated upstream
           console.log("Supabase Raw Response:", {
+=======
+          console.log("🛠 Supabase Raw Response:", {
+>>>>>>> Stashed changes
             data: supabaseData,
             error,
           });
 
           if (error) {
+<<<<<<< Updated upstream
             console.error(`Supabase Query Failed: ${error.message}`);
+=======
+            console.error(`❌ Supabase Query Failed: ${error.message}`);
+>>>>>>> Stashed changes
             throw new Error(`Query Failed: ${error.message}`);
           }
 
           if (!supabaseData || supabaseData.length === 0) {
+<<<<<<< Updated upstream
             console.warn("No COGS data returned from Supabase!");
+=======
+            console.warn("⚠️ No COGS data returned from Supabase!");
+>>>>>>> Stashed changes
             return [];
           }
 
