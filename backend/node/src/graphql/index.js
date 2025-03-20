@@ -14,9 +14,11 @@ const demandForecastSchema = require("./schemas/demandForecastSchema");
 const demandForecastResolver = require("./resolvers/demandForecastResolver");
 const marketBasketSchema = require("./schemas/marketBasketSchema");
 const marketBasketResolvers = require("./resolvers/marketBasketResolvers");
+const shoppingBehaviourResolvers = require("./resolvers/shoppingBehaviourResolvers");
+const shoppingBehaviourSchema = require("./schemas/shoppingBehaviourSchema");
 
-const typeDefs = mergeTypeDefs([overviewSchema,customerInsightsSchema,storeMetricsSchema,rfmSchema,demandForecastSchema,marketBasketSchema]);
-const resolvers = mergeResolvers([overviewResolvers,customerInsightsResolvers,storeMetricsResolvers,rfmResolvers,demandForecastResolver,marketBasketResolvers]);
+const typeDefs = mergeTypeDefs([overviewSchema,customerInsightsSchema,storeMetricsSchema,rfmSchema,demandForecastSchema,marketBasketSchema,shoppingBehaviourSchema]);
+const resolvers = mergeResolvers([overviewResolvers,customerInsightsResolvers,storeMetricsResolvers,rfmResolvers,demandForecastResolver,marketBasketResolvers,shoppingBehaviourResolvers]);
 
 const apolloServer = new ApolloServer({ typeDefs, resolvers });
 
