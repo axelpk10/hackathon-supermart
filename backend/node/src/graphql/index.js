@@ -4,7 +4,7 @@ const { mergeResolvers } = require("@graphql-tools/merge");
 
 const overviewSchema = require("./schemas/overviewSchema");
 const overviewResolvers = require("./resolvers/overviewResolvers");
-const customerInsightsSchema = require("./schemas/customerInsightsSchema")
+const customerInsightsSchema = require("./schemas/customerInsightsSchema");
 const customerInsightsResolvers = require("./resolvers/customerInsightsResolvers");
 const storeMetricsSchema = require("./schemas/storeMetricsSchema");
 const storeMetricsResolvers = require("./resolvers/storeMetricsResolvers");
@@ -17,8 +17,24 @@ const marketBasketResolvers = require("./resolvers/marketBasketResolvers");
 const shoppingBehaviourResolvers = require("./resolvers/shoppingBehaviourResolvers");
 const shoppingBehaviourSchema = require("./schemas/shoppingBehaviourSchema");
 
-const typeDefs = mergeTypeDefs([overviewSchema,customerInsightsSchema,storeMetricsSchema,rfmSchema,demandForecastSchema,marketBasketSchema,shoppingBehaviourSchema]);
-const resolvers = mergeResolvers([overviewResolvers,customerInsightsResolvers,storeMetricsResolvers,rfmResolvers,demandForecastResolver,marketBasketResolvers,shoppingBehaviourResolvers]);
+const typeDefs = mergeTypeDefs([
+  overviewSchema,
+  customerInsightsSchema,
+  storeMetricsSchema,
+  rfmSchema,
+  demandForecastSchema,
+  marketBasketSchema,
+  shoppingBehaviourSchema,
+]);
+const resolvers = mergeResolvers([
+  overviewResolvers,
+  customerInsightsResolvers,
+  storeMetricsResolvers,
+  rfmResolvers,
+  demandForecastResolver,
+  marketBasketResolvers,
+  shoppingBehaviourResolvers,
+]);
 
 const apolloServer = new ApolloServer({ typeDefs, resolvers });
 

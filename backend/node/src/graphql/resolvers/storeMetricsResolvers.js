@@ -291,37 +291,6 @@ const storeMetricsResolvers = {
         throw new Error(`Resolver Error: yearlyProfitByStore - ${error.message}`);
       }
     },
-
-    // Total Profit Per Store Resolver
-    totalProfitPerStore: async (_, { year }) => {
-      try {
-        console.log(`Fetching Total Profit Per Store for year: ${year}`);
-
-        const cacheKey = `totalProfitPerStore:${year}`;
-        let cachedData = await redisClient.get(cacheKey);
-
-        if (cachedData) {
-          console.log("Cache hit - Returning cached data");
-          return JSON.parse(cachedData);
-        }
-console.log("Cache miss - Fetching from Supabase");
-        const { data, error } = await supabase.rpc("get_total_profit_per_store", { year_param: year });
-
-        if (error) {
-          console.error(`Supabase Query Failed: ${error.message}`);
-          throw new Error(`Query Failed: get_total_profit_per_store - ${error.message}`);
-        }
-
-        console.log("Supabase Data Fetched:", data);
-
-        await redisClient.setex(cacheKey, 86400, JSON.stringify(data));
-
-        return data;
-      } catch (error) {
-        console.error(`Resolver Error: totalProfitPerStore - ${error.message}`);
-        throw new Error(`Resolver Error: totalProfitPerStore - ${error.message}`);
-      }
-    },
   },
 };
 

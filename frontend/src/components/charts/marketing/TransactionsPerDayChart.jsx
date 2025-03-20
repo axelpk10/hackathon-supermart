@@ -1,14 +1,14 @@
 import React from "react";
 import {
-  LineChart,
-  Line,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   Tooltip,
   CartesianGrid,
   ResponsiveContainer,
 } from "recharts";
-import { formatCrNumber, formatNumber } from "../../../utils/formatNumber"; 
+import { formatNumber } from "../../../utils/formatNumber";
 
 // 🛠 Custom Tooltip Component
 const CustomTooltip = ({ active, payload }) => {
@@ -16,10 +16,10 @@ const CustomTooltip = ({ active, payload }) => {
     return (
       <div className="bg-white p-3 shadow-md border border-gray-300 rounded-lg">
         <p className="text-xl font-bold text-gray-800">
-          {payload[0].payload.month}
+          Day {payload[0].payload.transaction_day}
         </p>
         <p className="text-lg text-blue-600">
-          ₹ {formatNumber(payload[0].value)} 
+          Transactions: {formatNumber(payload[0].value)}
         </p>
       </div>
     );
@@ -27,25 +27,24 @@ const CustomTooltip = ({ active, payload }) => {
   return null;
 };
 
-const MonthlyRevenueChart = ({ data }) => {
+const TransactionsPerDayChart = ({ data }) => {
   return (
-    <div className="text-center">
+    <div className="text-center bg-white p-4 shadow-md rounded-lg">
       {/* 📌 Graph Title */}
-      <h2 className="text-center text-2xl font-bold mb-2">Monthly Revenue</h2>
+      <h2 className="text-3xl font-bold mb-4">Transactions Per Day</h2>
 
       <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={data}>
+        <AreaChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
 
-          {/* 📅 Month Names on X-Axis */}
-          <XAxis dataKey="month" />
+          {/* 📅 Days on X-Axis */}
+          <XAxis dataKey="transaction_day" />
 
-          {/* 💰 Revenue on Y-Axis (formatted in Cr) */}
+          {/* 🔢 Transaction count on Y-Axis */}
           <YAxis
-            tickFormatter={formatCrNumber}
-            domain={[0, "auto"]}
+            tickFormatter={formatNumber}
             label={{
-              value: "(in Cr)",
+              value: "Transactions",
               position: "left",
               angle: -90,
               offset: -10,
@@ -56,17 +55,19 @@ const MonthlyRevenueChart = ({ data }) => {
           {/* 🛠 Custom Tooltip */}
           <Tooltip content={<CustomTooltip />} />
 
-          <Line
+          {/* 📊 AreaChart instead of LineChart */}
+          <Area
             type="monotone"
-            dataKey="totalRevenue"
-            stroke="#8884d8"
+            dataKey="transaction_count"
+            stroke="#F97316"
+            fill="#FDBA74" // Light Orange Fill
             strokeWidth={2}
-            name="Revenue (Cr)"
+            name="Transactions"
           />
-        </LineChart>
+        </AreaChart>
       </ResponsiveContainer>
     </div>
   );
 };
 
-export default MonthlyRevenueChart;
+export default TransactionsPerDayChart;

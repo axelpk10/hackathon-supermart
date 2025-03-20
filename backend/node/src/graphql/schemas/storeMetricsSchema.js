@@ -68,12 +68,7 @@ const storeMetricsSchema = gql`
     total_profit: Float!
   }
 
-  type TotalProfitPerStore {
-    store_id: Int!
-    store_location: String!
-    city: String!
-    total_profit: Float!
-  }
+  
 
   type Query {
     monthlyRevenueByStore(year: Int!): [MonthlyRevenue]
@@ -84,7 +79,6 @@ const storeMetricsSchema = gql`
     fetchTierWiseRevenue(year: Int!): [TierRevenue]
     storeProfitMargin(year: Int!): [StoreProfitMargin]
     yearlyProfitByStore(year: Int!): [YearlyProfitByStore]
-    totalProfitPerStore(year: Int!): [TotalProfitPerStore]
   }
 `;
 

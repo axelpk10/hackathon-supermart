@@ -1,11 +1,21 @@
 const API_URL = "http://localhost:5000/graphql";
+const YEAR = 2024; // Hardcoded year
 
-const fetchGraphQLData = async (query, variables) => {
+export const fetchItemsSoldPerCategory = async () => {
   try {
     const response = await fetch(API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ query, variables }),
+      body: JSON.stringify({
+        query: `
+          query GetItemsSoldPerCategory {
+            itemsSoldPerCategory(year: ${YEAR}) {
+              category
+              total_items_sold
+            }
+          }
+        `,
+      }),
     });
 
     const result = await response.json();
@@ -15,68 +25,102 @@ const fetchGraphQLData = async (query, variables) => {
       return [];
     }
 
-    return result.data || [];
+    return result.data?.itemsSoldPerCategory || [];
   } catch (error) {
-    console.error("Error fetching data:", error);
+    console.error("Error fetching items sold per category:", error);
     return [];
   }
 };
 
-// Fetch items sold per category
-export const fetchItemsSoldPerCategory = async (year) => {
-  const query = `
-    query GetItemsSoldPerCategory($year: Int!) {
-      itemsSoldPerCategory(year: $year) {
-        category
-        total_items_sold
-      }
+export const fetchItemsSoldPerBrand = async () => {
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        query: `
+          query GetItemsSoldPerBrand {
+            itemsSoldPerBrand(year: ${YEAR}) {
+              brand
+              total_items_sold
+            }
+          }
+        `,
+      }),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok || result.errors) {
+      console.error("GraphQL Error:", result.errors || "Unknown error");
+      return [];
     }
-  `;
-  return fetchGraphQLData(query, { year }).then(
-    (data) => data.itemsSoldPerCategory || []
-  );
+
+    return result.data?.itemsSoldPerBrand || [];
+  } catch (error) {
+    console.error("Error fetching items sold per brand:", error);
+    return [];
+  }
 };
 
-// Fetch items sold per brand
-export const fetchItemsSoldPerBrand = async (year) => {
-  const query = `
-    query GetItemsSoldPerBrand($year: Int!) {
-      itemsSoldPerBrand(year: $year) {
-        brand
-        total_items_sold
-      }
+export const fetchTransactionsByDay = async () => {
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        query: `
+          query GetTransactionsByDay {
+            transactionsByDay(year: ${YEAR}) {
+              transaction_day
+              transaction_count
+            }
+          }
+        `,
+      }),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok || result.errors) {
+      console.error("GraphQL Error:", result.errors || "Unknown error");
+      return [];
     }
-  `;
-  return fetchGraphQLData(query, { year }).then(
-    (data) => data.itemsSoldPerBrand || []
-  );
+
+    return result.data?.transactionsByDay || [];
+  } catch (error) {
+    console.error("Error fetching transactions by day:", error);
+    return [];
+  }
 };
 
-// Fetch transactions by day
-export const fetchTransactionsByDay = async (year) => {
-  const query = `
-    query GetTransactionsByDay($year: Int!) {
-      transactionsByDay(year: $year) {
-        transaction_day
-        transaction_count
-      }
-    }
-  `;
-  return fetchGraphQLData(query, { year }).then(
-    (data) => data.transactionsByDay || []
-  );
-};
+export const fetchTransactionsByHour = async () => {
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        query: `
+          query GetTransactionsByHour {
+            transactionsByHour(year: ${YEAR}) {
+              transaction_hour
+              transaction_count
+            }
+          }
+        `,
+      }),
+    });
 
-export const fetchTransactionsByHour = async (year) => {
-  const query = `
-    query GetTransactionsByHour($year: Int!) {
-      transactionsByHour(year: $year) {
-        transaction_hour
-        transaction_count
-      }
+    const result = await response.json();
+
+    if (!response.ok || result.errors) {
+      console.error("GraphQL Error:", result.errors || "Unknown error");
+      return [];
     }
-  `;
-  return fetchGraphQLData(query, { year }).then(
-    (data) => data.transactionsByHour || []
-  );
+
+    return result.data?.transactionsByHour || [];
+  } catch (error) {
+    console.error("Error fetching transactions by hour:", error);
+    return [];
+  }
 };
