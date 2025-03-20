@@ -4,291 +4,180 @@ const redisClient = require("../../config/redisClient");
 const storeMetricsResolvers = {
   Query: {
     // Monthly Revenue By Store
-    monthlyRevenueByStore: async (_, { year }) => {
+    monthlyRevenueByStore: async (_, { store_id, month, year }) => {
       try {
-        const cacheKey = `monthlyRevenueByStore:${year}`;
+        const cacheKey = monthlyRevenueByStore;
         let cachedData = await redisClient.get(cacheKey);
 
         if (cachedData) {
-          return JSON.parse(cachedData);
-        }
-
-        console.log("Fetching monthly revenue per store from Supabase...");
-        const { data, error } = await supabase.rpc(
-          "get_monthly_revenue_by_store",
-          {
-            year_param: year,
-          }
-        );
-
-        if (error) {
-          throw new Error(
-            `Query Failed: monthlyRevenueByStore - ${error.message}`
+          return JSON.parse(cachedData).filter(
+            (entry) => 
+              entry.store_id === store_id &&
+              entry.month === month &&
+              entry.year === year
           );
         }
 
-        await redisClient.setex(cacheKey, 86400, JSON.stringify(data));
-
-        return data;
-      } catch (error) {
-        throw new Error(
-          `Resolver Error: monthlyRevenueByStore - ${error.message}`
-        );
-      }
-    },
-
-    // Profit By Store Per Month
-    profitByStorePerMonth: async (_, { year }) => {
-      try {
-        const cacheKey = `profitByStorePerMonth:${year}`;
-        let cachedData = await redisClient.get(cacheKey);
-
-        if (cachedData) {
-          return JSON.parse(cachedData);
-        }
-
-        console.log("Fetching profit per store per month from Supabase...");
-        const { data, error } = await supabase.rpc(
-          "get_profit_by_store_per_month",
-          {
-            year_param: year,
-          }
-        );
+        console.log("Fetching all monthly revenue from Supabase...");
+        const { data, error } = await supabase.rpc("get_monthly_revenue_by_store");
 
         if (error) {
-          throw new Error(
-            `Query Failed: profitByStorePerMonth - ${error.message}`
-          );
-        }
-
-        await redisClient.setex(cacheKey, 86400, JSON.stringify(data));
-
-        return data;
-      } catch (error) {
-        throw new Error(
-          `Resolver Error: profitByStorePerMonth - ${error.message}`
-        );
-      }
-    },
-
-    // Total Items Sold Per Store Per Year
-    totalItemsSoldPerStorePerYear: async (_, { year }) => {
-      try {
-        const cacheKey = `totalItemsSoldPerStorePerYear:${year}`;
-        let cachedData = await redisClient.get(cacheKey);
-
-        if (cachedData) {
-          return JSON.parse(cachedData);
-        }
-
-        console.log(
-          "Fetching total items sold per store per year from Supabase..."
-        );
-        const { data, error } = await supabase.rpc(
-          "get_total_items_sold_per_store_per_year",
-          {
-            year_param: year,
-          }
-        );
-
-        if (error) {
-          throw new Error(
-            `Query Failed: totalItemsSoldPerStorePerYear - ${error.message}`
-          );
-        }
-
-        const formattedData = data.map((entry) => ({
-          ...entry,
-          total_items_sold: entry.total_items_sold
-            ? entry.total_items_sold.toString()
-            : "0",
-        }));
-
-        await redisClient.setex(cacheKey, 86400, JSON.stringify(formattedData));
-
-        return formattedData;
-      } catch (error) {
-        throw new Error(
-          `Resolver Error: totalItemsSoldPerStorePerYear - ${error.message}`
-        );
-      }
-    },
-
-    // Total Items Sold Per Store Per Month
-    totalItemsSoldPerStorePerMonth: async (_, { year }) => {
-      try {
-        const cacheKey = `totalItemsSoldPerStorePerMonth:${year}`;
-        let cachedData = await redisClient.get(cacheKey);
-
-        if (cachedData) {
-          return JSON.parse(cachedData);
-        }
-
-        console.log(
-          "Fetching total items sold per store per month from Supabase..."
-        );
-        const { data, error } = await supabase.rpc(
-          "get_total_items_sold_per_store_per_month",
-          {
-            year_param: year,
-          }
-        );
-
-        if (error) {
-          throw new Error(
-            `Query Failed: totalItemsSoldPerStorePerMonth - ${error.message}`
-          );
-        }
-
-        const formattedData = data.map((entry) => ({
-          ...entry,
-          total_items_sold: entry.total_items_sold
-            ? entry.total_items_sold.toString()
-            : "0",
-        }));
-
-        await redisClient.setex(cacheKey, 86400, JSON.stringify(formattedData));
-
-        return formattedData;
-      } catch (error) {
-        throw new Error(
-          `Resolver Error: totalItemsSoldPerStorePerMonth - ${error.message}`
-        );
-      }
-    },
-    cogsPerStorePerYear: async (_, { year }) => {
-      try {
-        const cacheKey = `cogsPerStorePerYear:${year}`;
-        let cachedData = await redisClient.get(cacheKey);
-
-        if (cachedData) {
-          console.log("✅ Returning cached COGS data from Redis.");
-          return JSON.parse(cachedData);
-        }
-
-        console.log(
-          `🔄 Fetching COGS per store for year ${year} from Supabase...`
-        );
-
-        // Fetch from Supabase
-        const { data, error } = await supabase.rpc(
-          "get_cogs_per_store_per_year",
-          { year_param: year }
-        );
-
-        console.log("🛠 Supabase Raw Response:", { data, error });
-
-        if (error) {
-          console.error(`❌ Supabase Query Failed: ${error.message}`);
           throw new Error(`Query Failed: ${error.message}`);
         }
 
-        if (!data || data.length === 0) {
-          console.warn("⚠️ No COGS data returned from Supabase!");
-          return [];
-        }
-
-        // Cache the response
         await redisClient.setex(cacheKey, 86400, JSON.stringify(data));
 
-        return data.map((row) => ({
-          storeId: row.store_id,
-          year: row.year,
-          totalCogs: row.total_cogs,
-        }));
+        return data.filter(
+          (entry) =>
+            entry.store_id === store_id &&
+            entry.month === month &&
+            entry.year === year
+        );
       } catch (error) {
-        console.error(`❌ Resolver Error: ${error.message}`);
         throw new Error(`Resolver Error: ${error.message}`);
       }
     },
 
-    // Tier Wise Revenue
-    fetchTierWiseRevenue: async (_, { year }) => {
+    // Profit By Store Per Month
+    profitByStorePerMonth: async (_, { store_id, month, year }) => {
       try {
-        const cacheKey = `tierWiseRevenue:${year}`;
+        const cacheKey = profitByStorePerMonth;
         let cachedData = await redisClient.get(cacheKey);
 
         if (cachedData) {
-          return JSON.parse(cachedData);
+          return JSON.parse(cachedData).filter(
+            (entry) =>
+              entry.store_id === store_id &&
+              entry.month === month &&
+              entry.year === year
+          );
         }
 
-        const { data, error } = await supabase.rpc("get_tier_wise_revenue", {
-          year_param: year,
-        });
+        console.log("Fetching all profit data from Supabase...");
+        const { data, error } = await supabase.rpc("get_profit_by_store_per_month");
 
         if (error) {
-          throw new Error(`Query Failed: tierWiseRevenue - ${error.message}`);
+          throw new Error(`Query Failed: ${error.message}`);
         }
 
         await redisClient.setex(cacheKey, 86400, JSON.stringify(data));
 
-        return data;
+        return data.filter(
+          (entry) =>
+            entry.store_id === store_id &&
+            entry.month === month &&
+            entry.year === year
+        );
       } catch (error) {
-        throw new Error(`Resolver Error: tierWiseRevenue - ${error.message}`);
+        throw new Error(`Resolver Error: ${error.message}`);
       }
     },
 
-    // Store Profit Margin Resolver
-    storeProfitMargin: async (_, { year }) => {
+    // Total Items Sold Per Store Per Month
+    totalItemsSoldPerStorePerMonth: async (_, { store_id, month, year }) => {
       try {
-        console.log(`Fetching Store Profit Margin for year: ${year}`);
-
-        const cacheKey = `storeProfitMargin:${year}`;
+        const cacheKey = totalItemsSoldPerStorePerMonth;
         let cachedData = await redisClient.get(cacheKey);
 
         if (cachedData) {
-          console.log("Cache hit - Returning cached data");
-          return JSON.parse(cachedData);
+          return JSON.parse(cachedData).filter(
+            (entry) =>
+              entry.store_id === store_id &&
+              entry.month === month &&
+              entry.year === year
+          );
         }
 
-        console.log("Cache miss - Fetching from Supabase");
-        const { data, error } = await supabase.rpc("get_store_profit_margin", { year_param: year });
+        console.log("Fetching all total items sold data from Supabase...");
+        const { data, error } = await supabase.rpc("get_total_items_sold_per_store_per_month");
 
         if (error) {
-          console.error(`Supabase Query Failed: ${error.message}`);
-          throw new Error(`Query Failed: get_store_profit_margin - ${error.message}`);
+          throw new Error(`Query Failed: ${error.message}`);
         }
 
-        console.log("Supabase Data Fetched:", data);
+        const formattedData = data.map((entry) => ({
+          ...entry,
+          total_items_sold: entry.total_items_sold ? entry.total_items_sold.toString() : "0",
+        }));
 
-        await redisClient.setex(cacheKey, 86400, JSON.stringify(data));
+        await redisClient.setex(cacheKey, 86400, JSON.stringify(formattedData));
 
-        return data;
+        return formattedData.filter(
+          (entry) =>
+            entry.store_id === store_id &&
+            entry.month === month &&
+            entry.year === year
+        );
       } catch (error) {
-        console.error(`Resolver Error: storeProfitMargin - ${error.message}`);
-        throw new Error(`Resolver Error: storeProfitMargin - ${error.message}`);
+        throw new Error(`Resolver Error: ${error.message}`);
       }
     },
 
-    // Yearly Profit by Store Resolver
-    yearlyProfitByStore: async (_, { year }) => {
-      try {
-        console.log(`Fetching Yearly Profit by Store for year: ${year}`);
+    // COGS Per Store Per Year
+    cogsPerStorePerYear: async (_, { store_id, year }) => {
+  try {
+    const cacheKey = `cogsPerStorePerYear:${year}`;
+    let cachedData = await redisClient.get(cacheKey);
 
-        const cacheKey = `yearlyProfitByStore:${year}`;
+    if (cachedData) {
+      const parsedData = JSON.parse(cachedData);
+      return parsedData.filter(row => row.storeId === store_id);
+    }
+
+    console.log(`Fetching COGS data for year ${year} from Supabase...`);
+    const { data, error } = await supabase.rpc("get_cogs_per_store_per_year", {
+      year_param: year,
+    });
+
+    if (error) {
+      throw new Error(`Query Failed: ${error.message}`);
+    }
+
+    const formattedData = data.map((row) => ({
+      storeId: row.store_id,
+      year: row.year,
+      totalCogs: row.total_cogs,
+    }));
+
+    // Store the full dataset in cache
+    await redisClient.setex(cacheKey, 86400, JSON.stringify(formattedData));
+
+    // Filter only for the requested store_id
+    return formattedData.filter(row => row.storeId === store_id);
+  } catch (error) {
+    throw new Error(`Resolver Error: ${error.message}`);
+  }
+},
+    // Yearly Profit By Store
+    yearlyProfitByStore: async (_, { store_id, year }) => {
+      try {
+        const cacheKey = yearlyProfitByStore;
         let cachedData = await redisClient.get(cacheKey);
 
         if (cachedData) {
-          console.log("Cache hit - Returning cached data");
-          return JSON.parse(cachedData);
+          return JSON.parse(cachedData).filter(
+            (entry) =>
+              entry.store_id === store_id &&
+              entry.year === year
+          );
         }
 
-        console.log("Cache miss - Fetching from Supabase");
-        const { data, error } = await supabase.rpc("get_yearly_profit_by_store", { year_param: year });
+        console.log("Fetching all yearly profit data from Supabase...");
+        const { data, error } = await supabase.rpc("get_yearly_profit_by_store");
 
         if (error) {
-          console.error(`Supabase Query Failed: ${error.message}`);
-          throw new Error(`Query Failed: get_yearly_profit_by_store - ${error.message}`);
+          throw new Error(`Query Failed: ${error.message}`);
         }
-
-        console.log("Supabase Data Fetched:", data);
 
         await redisClient.setex(cacheKey, 86400, JSON.stringify(data));
 
-        return data;
+        return data.filter(
+          (entry) =>
+            entry.store_id === store_id &&
+            entry.year === year
+        );
       } catch (error) {
-        console.error(`Resolver Error: yearlyProfitByStore - ${error.message}`);
-        throw new Error(`Resolver Error: yearlyProfitByStore - ${error.message}`);
+        throw new Error(`Resolver Error: ${error.message}`);
       }
     },
   },

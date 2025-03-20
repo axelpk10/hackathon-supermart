@@ -1,8 +1,8 @@
 import React from 'react'
-import ItemsSoldPerCategoryChart from "../components/charts/marketing/ItemsSoldPerCategoryGraph";
-import ItemsSoldPerBrandChart from "../components/charts/marketing/ItemsSoldPerBrandChart";
-import TransactionsByDayChart from "../components/charts/marketing/TransactionsPerDayChart";
-import TransactionsByHourChart from "../components/charts/marketing/TransactionsPerHourChart";
+import ItemsSoldPerCategoryChart from "../components/charts/shoppingbehaviour/ItemsSoldPerCategoryGraph";
+import ItemsSoldPerBrandChart from "../components/charts/shoppingbehaviour/ItemsSoldPerBrandChart";
+import TransactionsByDayChart from "../components/charts/shoppingbehaviour/TransactionsPerDayChart";
+import TransactionsByHourChart from "../components/charts/shoppingbehaviour/TransactionsPerHourChart";
 
 const ShoppingBehaviour = () => {
   return (
