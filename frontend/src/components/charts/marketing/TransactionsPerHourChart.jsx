@@ -1,4 +1,6 @@
 import React from "react";
+import { useState,useEffect } from "react";
+import { fetchTransactionsByHour } from "../../../utils/shoppingBehaviourApi";
 import {
   AreaChart,
   Area,
@@ -27,7 +29,13 @@ const CustomTooltip = ({ active, payload }) => {
   return null;
 };
 
-const TransactionsPerHourChart = ({ data }) => {
+const TransactionsPerHourChart = () => {
+  const [data, setData] = useState([]);
+    
+      useEffect(() => {
+        fetchTransactionsByHour().then(setData);
+      }, []);
+
   return (
     <div className="text-center">
       {/* 📌 Graph Title */}
@@ -45,13 +53,7 @@ const TransactionsPerHourChart = ({ data }) => {
           {/* 🔢 Transaction count on Y-Axis */}
           <YAxis
             tickFormatter={formatNumber}
-            label={{
-              value: "Transactions",
-              position: "left",
-              angle: -90,
-              offset: -10,
-              style: { fontWeight: "bold", fontSize: "16px", fill: "#333" },
-            }}
+            
           />
 
           {/* 🛠 Custom Tooltip */}
