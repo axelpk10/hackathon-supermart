@@ -1,10 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { ChevronDown } from "lucide-react";
 
-const StorePerformanceHeader = () => {
-  const [selectedYear, setSelectedYear] = useState("2024");
-  const [selectedQuarter, setSelectedQuarter] = useState("Q1");
-  const [selectedStore, setSelectedStore] = useState("1");
+const StorePerformanceHeader = ({selectedYear,setSelectedYear,selectedQuarter,setSelectedQuarter,selectedStore,setSelectedStore}) => {
+  
 
   const years = ["2024"];
   const quarters = ["Q1", "Q2", "Q3", "Q4", "fullYear"];

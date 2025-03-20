@@ -41,11 +41,6 @@ const storeMetricsSchema = gql`
     total_cogs: Float
   }
 
-  type TierRevenue {
-    tier: Int
-    total_revenue: Float
-  }
-
   type StoreProfitByMonth {
     store_id: Int!
     store_location: String!
@@ -82,15 +77,12 @@ const storeMetricsSchema = gql`
 
     totalItemsSoldPerStorePerMonth(
       year: Int!
-      quarter: String
       store_id: Int
+      quarter: String
     ): [ItemsSoldPerStoreMonth]
 
     # COGS Per Store Per Year
     cogsPerStorePerYear(year: Int!, store_id: Int): [CogsPerStore]
-
-    # Tier Wise Revenue
-    fetchTierWiseRevenue(year: Int!): [TierRevenue]
 
     # Store Profit Margin
     storeProfitMargin(year: Int!, store_id: Int): [StoreProfitMargin]
