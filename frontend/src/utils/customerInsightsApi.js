@@ -90,3 +90,37 @@ export const fetchCustomerCountByCity = async () => {
     return [];
   }
 };
+
+export const fetchRFMData = async () => {
+  try {
+    const response = await fetch("http://localhost:5000/graphql", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        query: `
+          query GetRFMData {
+            getRFMData {
+              customer_id
+              recency
+              frequency
+              monetary
+              label
+            }
+          }
+        `,
+      }),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok || result.errors) {
+      console.error("GraphQL Error:", result.errors || "Unknown error");
+      return [];
+    }
+
+    return result.data?.getRFMData || [];
+  } catch (error) {
+    console.error("Error fetching RFM data:", error);
+    return [];
+  }
+};
