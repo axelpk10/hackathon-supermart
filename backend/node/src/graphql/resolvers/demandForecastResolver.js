@@ -2,10 +2,21 @@ const axios = require("axios");
 
 const FLASK_API_URL = "http://127.0.0.1:5000"; // Flask backend URL
 
+// Helper function to format date keys by removing the time portion
+const formatDateKeys = (forecastData) => {
+  const formatted = {};
+  Object.entries(forecastData).forEach(([dateTimeKey, value]) => {
+    // Remove the " 00:00:00" part from each date key
+    const dateKey = dateTimeKey.replace(" 00:00:00", "");
+    formatted[dateKey] = value;
+  });
+  return formatted;
+};
+
 const demandForecastResolver = {
   Query: {
     // 📌 Fetch Store Forecast (Runs script if no data is in Redis)
-    storeForecast: async () => {
+    storeForecast: async (_, { date }) => {
       try {
         let response = await axios.get(`${FLASK_API_URL}/forecast/store`);
 
@@ -17,17 +28,28 @@ const demandForecastResolver = {
         }
 
         const data = response.data.store_forecast;
-        return Object.entries(data).map(([date, forecast]) => ({
-          date,
-          forecast,
-        }));
+
+        // Convert data to array format and format date keys
+        const forecastArray = Object.entries(data).map(
+          ([forecastDate, forecast]) => ({
+            date: forecastDate,
+            forecast: formatDateKeys(forecast),
+          })
+        );
+
+        // Filter by date if provided
+        if (date) {
+          return forecastArray.filter((item) => item.date === date);
+        }
+
+        return forecastArray;
       } catch (error) {
         throw new Error("Error fetching store forecast: " + error.message);
       }
     },
 
     // 📌 Fetch Category Forecast (Runs script if no data is in Redis)
-    categoryForecast: async () => {
+    categoryForecast: async (_, { date }) => {
       try {
         let response = await axios.get(`${FLASK_API_URL}/forecast/category`);
 
@@ -39,10 +61,21 @@ const demandForecastResolver = {
         }
 
         const data = response.data.category_forecast;
-        return Object.entries(data).map(([date, forecast]) => ({
-          date,
-          forecast,
-        }));
+
+        // Convert data to array format and format date keys
+        const forecastArray = Object.entries(data).map(
+          ([forecastDate, forecast]) => ({
+            date: forecastDate,
+            forecast: formatDateKeys(forecast),
+          })
+        );
+
+        // Filter by date if provided
+        if (date) {
+          return forecastArray.filter((item) => item.date === date);
+        }
+
+        return forecastArray;
       } catch (error) {
         throw new Error("Error fetching category forecast: " + error.message);
       }
