@@ -37,11 +37,6 @@ const ShoppingBehaviour = () => {
         <div className="col-span-3">
           <MBAAssociationTable />
         </div>
-
-        {/*  Placeholder for Future Analytics */}
-        <div className="bg-gray-100 p-4 rounded-lg flex items-center justify-center">
-          <p className="text-gray-500 italic">Coming Soon</p>
-        </div>
       </div>
     </div>
   );

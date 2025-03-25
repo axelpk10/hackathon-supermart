@@ -12,8 +12,8 @@ const demandForecastSchema = gql`
   }
 
   type Query {
-    storeForecast(date: String!): [StoreForecast]
-    categoryForecast: [CategoryForecast]
+    storeForecast(date: String): [StoreForecast]
+    categoryForecast(date: String): [CategoryForecast]
   }
 
   type Mutation {
