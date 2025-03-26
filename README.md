@@ -39,3 +39,34 @@ The **Retail Customer Analytics** project aims to analyze customer behavior, sal
 ```sh
 git clone https://github.com/yourusername/retail-customer-analytics.git
 cd retail-customer-analytics
+```
+Prerequisites
+Node.js (v16+)
+Python (v3.10)
+Docker (for Redis)
+Supabase (for PostgreSQL)
+Redis (Running via Docker)
+Environment Variables (Create a .env file)
+
+### Setup Redis (Docker)
+```sh
+docker run --name redis-container -d -p 6379:6379 redis
+```
+### Setup Node.js Backend
+```sh
+cd backend/node
+npm install
+npm run dev
+```
+### Setup Flask Backend (ML Models)
+```sh
+cd backend/flask
+pip install -r requirements.txt
+python app.py  # Runs on port 5001
+```
+### Run Frontend (React + Recharts)
+```sh
+cd frontend
+npm install
+npm run dev 
+```
